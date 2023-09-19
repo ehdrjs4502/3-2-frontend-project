@@ -20,7 +20,7 @@ export default function Grade({ grade, rows, setRows, allNames }) {
             projectScore: 0, // 과제 점수
             midExamScore: 0, // 중간 점수
             finalExamScore: 0, // 기말 점수
-            result: "P", // 패스/논패스
+            passNonPass: "P", // 패스/논패스
             isSave: false, // 확인 버튼 눌렀는지
         };
 
@@ -44,7 +44,6 @@ export default function Grade({ grade, rows, setRows, allNames }) {
         const findIndex = rows.findIndex((item) => item.name === name); // 확인 버튼 누른 열의 과목명이 rows에 몇 번 index인지 찾기
         const copiedItems = [...rows]; // rows를 새로운 배열에 저장 (useState 쓰면 set으로만 바꿀 수 있어서)
         const isNameDuplicated = allNames.indexOf(name) !== -1; // 중복된 과목명 찾기
-        console.log(allNames.indexOf(name));
 
         // 조건에 맞게 잘 입력했는지 확인
         if (name === "") {

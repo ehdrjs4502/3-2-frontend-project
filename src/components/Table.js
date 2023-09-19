@@ -31,9 +31,6 @@ export default function Table({
                     const total = row.attendanceScore + row.projectScore + row.midExamScore + row.finalExamScore;
                     let score = getScore(total);
                     const isSelected = selectRow === idx;
-                    if (row.credit !== 1) {
-                        row.result = score;
-                    }
                     return (
                         <>
                             {row.isSave ? (
@@ -80,7 +77,7 @@ export default function Table({
                                     </td>
                                     <td></td>
                                     <td style={{ color: score === "F" && row.credit !== 1 && "red" }}>
-                                        <span>{row.result}</span>
+                                        <span>{row.credit !== 1 ? score : row.passNonPass}</span>
                                     </td>
                                 </tr>
                             ) : (
@@ -204,9 +201,9 @@ export default function Table({
                                     {row.credit === 1 ? (
                                         <td>
                                             <select
-                                                value={row.result}
+                                                value={row.passNonPass}
                                                 defaultValue="P"
-                                                onChange={(e) => handleInputChange(idx, "result", e.target.value)}
+                                                onChange={(e) => handleInputChange(idx, "passNonPass", e.target.value)}
                                             >
                                                 <option value="P">P</option>
                                                 <option value="N">N</option>
