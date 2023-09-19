@@ -29,8 +29,11 @@ export default function Table({
             <tbody>
                 {rows.map((row, idx) => {
                     const total = row.attendanceScore + row.projectScore + row.midExamScore + row.finalExamScore;
-                    const score = row.credit === 1 ? "P" : getScore(total);
+                    let score = getScore(total);
                     const isSelected = selectRow === idx;
+                    if (row.credit !== 1) {
+                        row.result = score;
+                    }
                     return (
                         <>
                             {row.isSave ? (
@@ -76,10 +79,25 @@ export default function Table({
                                         <span>{row.credit !== 1 && total}</span>
                                     </td>
                                     <td></td>
-                                    <td style={{ color: score === "F" && "red" }}>{score}</td>
+                                    <td style={{ color: score === "F" && row.credit !== 1 && "red" }}>
+                                        <span>{row.result}</span>
+                                    </td>
                                 </tr>
                             ) : (
-                                <tr key={idx}>
+                                <tr
+                                    key={idx}
+                                    onClick={() => {
+                                        if (isSelected) {
+                                            setSelectRow(null);
+                                        } else {
+                                            setSelectRow(idx);
+                                        }
+                                    }}
+                                    style={{
+                                        border: isSelected ? "2px solid red" : "1px solid black",
+                                        backgroundColor: "#F8E0F1",
+                                    }}
+                                >
                                     <td>
                                         <select
                                             value={row.subjectType}
@@ -114,53 +132,89 @@ export default function Table({
                                             max="10"
                                         />
                                     </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={row.attendanceScore}
-                                            onChange={(e) =>
-                                                handleInputChange(idx, "attendanceScore", parseInt(e.target.value))
-                                            }
-                                            min="0"
-                                            max="20"
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={row.projectScore}
-                                            onChange={(e) =>
-                                                handleInputChange(idx, "projectScore", parseInt(e.target.value))
-                                            }
-                                            min="0"
-                                            max="20"
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={row.midExamScore}
-                                            onChange={(e) =>
-                                                handleInputChange(idx, "midExamScore", parseInt(e.target.value))
-                                            }
-                                            min="0"
-                                            max="30"
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={row.finalExamScore}
-                                            onChange={(e) =>
-                                                handleInputChange(idx, "finalExamScore", parseInt(e.target.value))
-                                            }
-                                            min="0"
-                                            max="30"
-                                        />
-                                    </td>
+
+                                    {/* 출석, 과제, 중간, 기말 점수 */}
+                                    {row.credit !== 1 ? (
+                                        <>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    value={row.attendanceScore}
+                                                    onChange={(e) =>
+                                                        handleInputChange(
+                                                            idx,
+                                                            "attendanceScore",
+                                                            parseInt(e.target.value)
+                                                        )
+                                                    }
+                                                    min="0"
+                                                    max="20"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    value={row.projectScore}
+                                                    onChange={(e) =>
+                                                        handleInputChange(idx, "projectScore", parseInt(e.target.value))
+                                                    }
+                                                    min="0"
+                                                    max="20"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    value={row.midExamScore}
+                                                    onChange={(e) =>
+                                                        handleInputChange(idx, "midExamScore", parseInt(e.target.value))
+                                                    }
+                                                    min="0"
+                                                    max="30"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    value={row.finalExamScore}
+                                                    onChange={(e) =>
+                                                        handleInputChange(
+                                                            idx,
+                                                            "finalExamScore",
+                                                            parseInt(e.target.value)
+                                                        )
+                                                    }
+                                                    min="0"
+                                                    max="30"
+                                                />
+                                            </td>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </>
+                                    )}
+
+                                    {/* 총점, 평균, 성적 */}
                                     <td></td>
                                     <td></td>
-                                    <td></td>
+                                    {row.credit === 1 ? (
+                                        <td>
+                                            <select
+                                                value={row.result}
+                                                defaultValue="P"
+                                                onChange={(e) => handleInputChange(idx, "result", e.target.value)}
+                                            >
+                                                <option value="P">P</option>
+                                                <option value="N">N</option>
+                                            </select>
+                                        </td>
+                                    ) : (
+                                        <td></td>
+                                    )}
                                     <button onClick={() => onClickOkBtn(row.name)}>확인</button>
                                 </tr>
                             )}
