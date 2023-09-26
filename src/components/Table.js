@@ -44,7 +44,7 @@ export default function Table({
                                         }
                                     }}
                                     style={{
-                                        border: isSelected ? "2px solid red" : "1px solid black",
+                                        border: isSelected ? "1.5px solid red" : "1px solid black",
                                         backgroundColor: "#F8E0F1",
                                     }}
                                 >
@@ -91,7 +91,7 @@ export default function Table({
                                         }
                                     }}
                                     style={{
-                                        border: isSelected ? "2px solid red" : "1px solid black",
+                                        border: isSelected ? "1.5px solid red" : "1px solid black",
                                         backgroundColor: "#F8E0F1",
                                     }}
                                 >
@@ -219,6 +219,7 @@ export default function Table({
                     );
                 })}
             </tbody>
+            {/* 합계 영역 */}
             <tfoot>
                 <tr style={{ backgroundColor: "#F5BCA9" }}>
                     <td colSpan={3}>합계</td>
