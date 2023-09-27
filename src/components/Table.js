@@ -214,6 +214,11 @@ export default function Table({
 
             <style>
                 {`
+                    input{
+                        border: none;
+                        border-bottom: 1px solid gray; 
+                        background: transparent;
+                    }
                     input::-webkit-inner-spin-button {
                         appearance: none;
                         -moz-appearance: none;
