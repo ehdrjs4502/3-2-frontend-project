@@ -31,7 +31,7 @@ export default function Table({
                 <tbody>
                     {rows.map((row, idx) => {
                         const total = row.attendanceScore + row.projectScore + row.midExamScore + row.finalExamScore;
-                        let score = getScore(total);
+                        const score = getScore(total);
                         const isSelected = selectRow === idx;
                         return (
                             <tr
@@ -176,7 +176,7 @@ export default function Table({
                                                 <>
                                                     <td>{total}</td>
                                                     <td></td>
-                                                    <td style={{ color: totalScore === "F" && "red" }}>{score}</td>
+                                                    <td style={{ color: score == "F" ? "red" : "black" }}>{score}</td>
                                                 </>
                                             ) : (
                                                 <>
@@ -205,7 +205,7 @@ export default function Table({
                                 <td>{totals[4]}</td>
                                 <td>{total}</td>
                                 <td>{total && Math.round(total / rows.filter((row) => row.credit !== 1).length)}</td>
-                                <td style={{ color: totalScore === "F" && "red" }}>{totalScore}</td>
+                                <td style={{ color: totalScore === "F" ? "red" : "black" }}>{totalScore}</td>
                             </>
                         )}
                     </tr>
