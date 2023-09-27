@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createRef, useEffect, useRef, useState } from "react";
 import Table from "./Table";
 
 export default function Grade({ grade, rows, setRows, allNames }) {
@@ -7,6 +7,14 @@ export default function Grade({ grade, rows, setRows, allNames }) {
     const [total, setTotal] = useState(0); // 점수 총점
     const [totalScore, setTotalScore] = useState(""); // 합계 학점
     const [prevRowsLength, setPrevRowsLength] = useState(rows.length); // 이전 rows 배열의 길이 저장
+    const [isSave, setIsSave] = useState(false);
+
+    const nameInputRef = useRef([]); // 과목명 인풋창
+    const creditInputRef = useRef([]); // 학점 인풋창
+    const attendanceScoreInputRef = useRef([]); // 출석 점수 인풋창
+    const projectScoreInputRef = useRef([]); // 과제 점수 인풋창
+    const midExamScoreInputRef = useRef([]); // 중간 점수 인풋창
+    const finalExamScoreInputRef = useRef([]); // 기말 점수 인풋창
 
     // 추가 버튼 누를시 열 추가 하는 함수
     const onClickAddRowBtn = () => {
@@ -21,12 +29,12 @@ export default function Grade({ grade, rows, setRows, allNames }) {
             midExamScore: 0, // 중간 점수
             finalExamScore: 0, // 기말 점수
             passNonPass: "P", // 패스/논패스
-            isSave: false, // 확인 버튼 눌렀는지
         };
 
         setRows([...rows, newRow]); // 상태 업데이트
 
         // 추가 되면 다시 계산해야하니 합계 초기화
+        setIsSave(false);
         setTotal();
         setTotals([]);
         setTotalScore("");
@@ -37,45 +45,10 @@ export default function Grade({ grade, rows, setRows, allNames }) {
         const newRows = [...rows];
         newRows[index][field] = value;
         setRows(newRows);
-    };
-
-    // 확인 버튼 누를 시 입력창 -> span으로 변경
-    const onClickOkBtn = (name) => {
-        const findIndex = rows.findIndex((item) => item.name === name); // 확인 버튼 누른 열의 과목명이 rows에 몇 번 index인지 찾기
-        const copiedItems = [...rows]; // rows를 새로운 배열에 저장 (useState 쓰면 set으로만 바꿀 수 있어서)
-        const isNameDuplicated = allNames.indexOf(name) !== -1; // 중복된 과목명 찾기
-
-        // 조건에 맞게 잘 입력했는지 확인
-        if (name === "") {
-            return alert("과목명이 비어있습니다.");
-        }
-        if (isNameDuplicated) {
-            return alert("중복된 과목명이 있습니다.");
-        }
-        if (!(copiedItems[findIndex].credit >= 1 && copiedItems[findIndex].credit <= 3)) {
-            return alert("학점은 1~3까지만 입력 가능합니다.");
-        }
-
-        if (copiedItems[findIndex].credit > 1) {
-            if (!(copiedItems[findIndex].attendanceScore >= 1 && copiedItems[findIndex].attendanceScore <= 20)) {
-                return alert("출석점수는 1~20까지만 입력 가능합니다.");
-            }
-
-            if (!(copiedItems[findIndex].projectScore >= 1 && copiedItems[findIndex].projectScore <= 20)) {
-                return alert("과제점수는 1~20까지만 입력 가능합니다.");
-            }
-
-            if (!(copiedItems[findIndex].midExamScore >= 1 && copiedItems[findIndex].midExamScore <= 30)) {
-                return alert("중간고사 점수는 1~30까지만 입력 가능합니다.");
-            }
-
-            if (!(copiedItems[findIndex].finalExamScore >= 1 && copiedItems[findIndex].finalExamScore <= 30)) {
-                return alert("기말고사 점수는 1~30까지만 입력 가능합니다.");
-            }
-        }
-
-        copiedItems[findIndex].isSave = true; // 복사한 배열에서 확인 버튼 과목명에 isSave를 true로 바꿈
-        setRows(copiedItems); // 바꾼 거 상태 업데이트
+        setIsSave(false);
+        setTotal();
+        setTotals([]);
+        setTotalScore("");
     };
 
     // 삭제 버튼 누를 시 해당 열 삭제
@@ -127,6 +100,69 @@ export default function Grade({ grade, rows, setRows, allNames }) {
 
     // 저장 버튼 누를 시 합계 상태 저장 및 정렬
     const onClickSaveBtn = () => {
+        const result = [...new Set(allNames.filter((item, index) => allNames.indexOf(item) !== index))];
+        const myGradeDuplicate = rows
+            .map((item, idx) => ({ ...item, idx: idx }))
+            .filter((item) => result.includes(item.name)); // 내 학년에 중복되는 과목명 있는지 확인
+        const nameBlank = rows.map((item, idx) => ({ ...item, idx: idx })).filter((item) => item.name === ""); // 과목명 비었는지 확인
+        const invalidCredit = rows
+            .map((item, idx) => ({ ...item, idx: idx }))
+            .filter((item) => item.credit < 1 || item.credit > 3); // 학점 1~3까지 입력했는지 확인
+        const invalidAttendanceScore = rows
+            .map((item, idx) => ({ ...item, idx: idx }))
+            .filter((item) => item.attendanceScore < 0 || item.attendanceScore > 20); // 출석 점수 확인
+        const invalidProjectScore = rows
+            .map((item, idx) => ({ ...item, idx: idx }))
+            .filter((item) => item.projectScore < 0 || item.projectScore > 20); // 과제 점수 확인
+        const invalidMidExamScore = rows
+            .map((item, idx) => ({ ...item, idx: idx }))
+            .filter((item) => item.midExamScore < 0 || item.midExamScore > 30); // 중간 점수 확인
+        const invalidFinalExamScore = rows
+            .map((item, idx) => ({ ...item, idx: idx }))
+            .filter((item) => item.finalExamScore < 0 || item.finalExamScore > 30); // 기말 점수 확인
+
+        if (nameBlank.length !== 0) {
+            alert("과목명을 입력해주세요");
+            nameInputRef.current[nameBlank[0].idx].focus();
+            return;
+        }
+
+        if (myGradeDuplicate.length !== 0) {
+            alert(`과목명 '${myGradeDuplicate[0].name}'이 중복되었습니다.`);
+            nameInputRef.current[myGradeDuplicate[0].idx].focus();
+            return;
+        }
+
+        if (invalidCredit.length !== 0) {
+            alert("학점은 1 ~ 3점까지 입력 가능합니다.");
+            creditInputRef.current[invalidCredit[0].idx].focus();
+            return;
+        }
+
+        if (invalidAttendanceScore.length !== 0) {
+            alert("출석 점수는 0 ~ 20점까지 입력 가능합니다.");
+            attendanceScoreInputRef.current[invalidAttendanceScore[0].idx].focus();
+            return;
+        }
+
+        if (invalidProjectScore.length !== 0) {
+            alert("과제 점수는 0 ~ 20점까지 입력 가능합니다.");
+            projectScoreInputRef.current[invalidProjectScore[0].idx].focus();
+            return;
+        }
+
+        if (invalidMidExamScore.length !== 0) {
+            alert("중간 점수는 0 ~ 30점까지 입력 가능합니다.");
+            midExamScoreInputRef.current[invalidMidExamScore[0].idx].focus();
+            return;
+        }
+
+        if (invalidFinalExamScore.length !== 0) {
+            alert("기말 점수는 0 ~ 30점까지 입력 가능합니다.");
+            finalExamScoreInputRef.current[invalidFinalExamScore[0].idx].focus();
+            return;
+        }
+
         //이수, 필수, 과목명 순으로 오름차순 정렬
         const sortedRows = rows.sort((a, b) => {
             if (a.subjectType < b.subjectType) return -1;
@@ -141,9 +177,9 @@ export default function Grade({ grade, rows, setRows, allNames }) {
             return 0;
         });
 
+        setIsSave(true);
         setRows(sortedRows);
         calcaultor();
-
         console.log(rows);
     };
 
@@ -208,8 +244,16 @@ export default function Grade({ grade, rows, setRows, allNames }) {
                 total={total}
                 totalScore={totalScore}
                 handleInputChange={handleInputChange}
-                onClickOkBtn={onClickOkBtn}
                 getScore={getScore}
+                isSave={isSave}
+                inputRefs={{
+                    nameInputRef,
+                    creditInputRef,
+                    attendanceScoreInputRef,
+                    projectScoreInputRef,
+                    midExamScoreInputRef,
+                    finalExamScoreInputRef,
+                }}
             />
         </div>
     );

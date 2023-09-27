@@ -6,7 +6,7 @@ function App() {
     const [grade2Rows, setGrade2Rows] = useState([]); // 2학년 수강 과목 배열
     const [grade3Rows, setGrade3Rows] = useState([]); // 3학년 수강 과목 배열
     const allRows = [...grade1Rows, ...grade2Rows, ...grade3Rows]; // 1~3학년 전체 배열
-    const allNames = allRows.filter((row) => row.isSave == true).map((row) => row.name); // 전체 배열에서 isSave가 true인 이름만 저장
+    const allNames = allRows.map((row) => row.name); // 전체 배열에서 isSave가 true인 이름만 저장
 
     return (
         <div>
