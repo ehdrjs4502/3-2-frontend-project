@@ -176,7 +176,7 @@ export default function Table({
                                                 <>
                                                     <td>{total}</td>
                                                     <td></td>
-                                                    <td style={{ color: score == "F" ? "red" : "black" }}>{score}</td>
+                                                    <td style={{ color: score === "F" ? "red" : "black" }}>{score}</td>
                                                 </>
                                             ) : (
                                                 <>

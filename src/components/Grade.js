@@ -45,6 +45,8 @@ export default function Grade({ grade, rows, setRows, allNames }) {
         const newRows = [...rows];
         newRows[index][field] = value;
         setRows(newRows);
+
+        // 값 입력 시 합계 초기화
         setIsSave(false);
         setTotal();
         setTotals([]);
