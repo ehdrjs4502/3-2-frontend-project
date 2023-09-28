@@ -109,19 +109,21 @@ export default function Grade({ grade, rows, setRows, allNames }) {
         const nameBlank = rows.map((item, idx) => ({ ...item, idx: idx })).filter((item) => item.name === ""); // 과목명 비었는지 확인
         const invalidCredit = rows
             .map((item, idx) => ({ ...item, idx: idx }))
-            .filter((item) => item.credit < 1 || item.credit > 3); // 학점 1~3까지 입력했는지 확인
+            .filter((item) => item.credit < 1 || item.credit > 3 || isNaN(item.credit)); // 학점 1~3까지 입력했는지 확인
         const invalidAttendanceScore = rows
             .map((item, idx) => ({ ...item, idx: idx }))
-            .filter((item) => item.attendanceScore < 0 || item.attendanceScore > 20); // 출석 점수 확인
+            .filter((item) => item.attendanceScore < 0 || item.attendanceScore > 20 || isNaN(item.attendanceScore)); // 출석 점수 확인
         const invalidProjectScore = rows
             .map((item, idx) => ({ ...item, idx: idx }))
-            .filter((item) => item.projectScore < 0 || item.projectScore > 20); // 과제 점수 확인
+            .filter((item) => item.projectScore < 0 || item.projectScore > 20 || isNaN(item.projectScore)); // 과제 점수 확인
         const invalidMidExamScore = rows
             .map((item, idx) => ({ ...item, idx: idx }))
-            .filter((item) => item.midExamScore < 0 || item.midExamScore > 30); // 중간 점수 확인
+            .filter((item) => item.midExamScore < 0 || item.midExamScore > 30 || isNaN(item.midExamScore)); // 중간 점수 확인
         const invalidFinalExamScore = rows
             .map((item, idx) => ({ ...item, idx: idx }))
-            .filter((item) => item.finalExamScore < 0 || item.finalExamScore > 30); // 기말 점수 확인
+            .filter((item) => item.finalExamScore < 0 || item.finalExamScore > 30 || isNaN(item.finalExamScore)); // 기말 점수 확인
+
+        console.log(invalidCredit);
 
         if (nameBlank.length !== 0) {
             alert("과목명을 입력해주세요");
