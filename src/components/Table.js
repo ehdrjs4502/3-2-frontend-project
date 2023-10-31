@@ -204,7 +204,22 @@ export default function Table({
                                 <td>{totals[3]}</td>
                                 <td>{totals[4]}</td>
                                 <td>{total}</td>
-                                <td>{total && Math.round(total / rows.filter((row) => row.credit !== 1).length)}</td>
+                                <td>
+                                    {total &&
+                                        Math.round(
+                                            total /
+                                                rows.filter(
+                                                    (row) =>
+                                                        row.credit !== 1 &&
+                                                        getScore(
+                                                            row.attendanceScore +
+                                                                row.projectScore +
+                                                                row.midExamScore +
+                                                                row.finalExamScore
+                                                        ) !== "F"
+                                                ).length
+                                        )}
+                                </td>
                                 <td style={{ color: totalScore === "F" ? "red" : "black" }}>{totalScore}</td>
                             </>
                         )}
