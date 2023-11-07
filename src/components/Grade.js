@@ -82,20 +82,14 @@ export default function Grade({ grade, rows, setRows, allNames }) {
         let midExamTotal = 0; // 중간고사 점수 합계
         let finalExamTotal = 0; // 기말고사 점수 합계
 
-        // P이면서 F학점이 아닌 경우에만 총 학점 계산
-        rows.filter(
-            (row) =>
-                (row.credit === 1 && row.passNonPass === "P") ||
-                getScore(row.attendanceScore + row.projectScore + row.midExamScore + row.finalExamScore) !== "F"
-        ).map((row) => (creditTotal += row.credit));
+        // 1학점이 P이면서, 1학점 아닌 과목 총 학점 계산
+        rows.filter((row) => (row.credit === 1 && row.passNonPass === "P") || row.credit !== 1).map(
+            (row) => (creditTotal += row.credit)
+        );
 
-        // 1학점 아니면서 F학점이 아닌 과목 점수 합계 계산
+        // 1학점 아닌 과목 점수 합계 계산
         const arr = rows
-            .filter(
-                (row) =>
-                    row.credit !== 1 &&
-                    getScore(row.attendanceScore + row.projectScore + row.midExamScore + row.finalExamScore) !== "F"
-            )
+            .filter((row) => row.credit !== 1)
             .map((row) => {
                 attendanceTotal += row.attendanceScore;
                 projectTotal += row.projectScore;
